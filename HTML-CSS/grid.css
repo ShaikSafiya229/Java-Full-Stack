@@ -1,0 +1,30 @@
+.Friends{
+    display: grid;
+    grid-template-columns: 200px 1fr;
+    grid-template-rows: 50px 100px 50px;
+    gap: 1cm;
+}
+header{
+    grid-column: 1/3;
+    background: lime;
+}
+main{
+    background: pink;
+}
+footer{
+    grid-column: 1/3;
+    background: lightgray;
+}
+aside{
+    background: cyan;
+}
+.grid{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap:1cm;
+}
+.d1{
+    background: red;
+    text-align: center;
+    padding:20px;
+}
