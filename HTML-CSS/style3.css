@@ -1,0 +1,11 @@
+body{
+    background-color: purple;
+}
+img{
+    animation: picture 10s ease-in-out 2s infinite; 
+}
+img:hover{
+    border-style:groove;
+    border-width: 1cm;
+    transform:skew(45deg);
+}
