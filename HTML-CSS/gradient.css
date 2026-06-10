@@ -1,0 +1,20 @@
+/*h1{
+    height: 10cm;
+    background: linear-gradient(45deg,pink,green,yellow,orange,violet);
+}
+    /*h1{
+    height: 10cm;
+    background: radial-gradient(circle,red,blue,green,yellow,orange,violet);
+    }
+    */
+   /* h1{
+    height: 10cm;
+    background: conic-gradient(red,blue,green,yellow,orange,violet);
+    }
+    */
+    body{
+        display: flex;
+        flex-direction: row;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
