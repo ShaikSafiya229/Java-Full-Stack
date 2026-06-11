@@ -136,7 +136,6 @@ for(let i=1; i<=10; i++){
         console.log(i+"x" + j+"="+ (j*i));
     }
 }
-*/
 let totalPersons = 5;
 let totalGifts = 30;
 
@@ -152,3 +151,36 @@ for (let i = 1; i <= totalGifts; i++) {
 }
 
 console.log("The last gift goes to person: " + lastReceiver);
+function cook()
+{
+    console.log("Pour the batter into the pan.");
+    console.log("Rub it round order with gareta");
+    console.log("spill some oil above it then wait");
+    console.log("Twist it with dosa gareta");
+    console.log("At last gently serve it to anyone");
+}
+for(i=1;i<=9;i++){
+    cook();
+}
+function dishwash(vessels){
+    console.log("we have to wash "+vessels+ "vessels");
+}
+dishwash(2);
+*/
+function guess(n)
+{
+    let userGuess = Number(prompt("Enter a number:"));
+    if (n == userGuess) {
+        console.log("Your guess is right");
+    }
+    else if (n < userGuess) {
+        console.log("Try a small number");
+        guess(n);
+    }
+    else {
+        console.log("Try a big number");
+        guess(n);
+    }
+}
+let number = Math.floor(Math.random() * 100);
+guess(number);
