@@ -166,7 +166,6 @@ function dishwash(vessels){
     console.log("we have to wash "+vessels+ "vessels");
 }
 dishwash(2);
-*/
 function guess(n)
 {
     let userGuess = Number(prompt("Enter a number:"));
@@ -183,4 +182,14 @@ function guess(n)
     }
 }
 let number = Math.floor(Math.random() * 100);
-guess(number);
+guess(number);*/
+let chocolates =["melodi","fivestar","kitkat","kachamango","alpenliebe","darkchocolate"]
+let sales = {
+    siddikha:chocolates[0],
+    Dinesh:chocolates[1],
+    susmitha:chocolates[2],
+    Damu:chocolates[3],
+    Abilash:chocolates[5],
+    Sana:chocolates[4]
+};
+console.log(sales)
