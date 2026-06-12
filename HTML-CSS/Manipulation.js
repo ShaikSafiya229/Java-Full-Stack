@@ -1,0 +1,10 @@
+let pic=document.getElementById("wish");
+console.log(pic);
+let mouse = document.getElementsByClassName("wishes");
+console.log(mouse);
+let cable= document.getElementsByTagName("div");
+console.log(cable);
+let saf = document.querySelector("#content");
+console.log(saf);
+let queries = document.querySelectorAll("p");
+console.log(queries);
