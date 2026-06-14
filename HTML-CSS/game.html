@@ -1,0 +1,299 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Catch the Star</title>
+  <style>
+    :root {
+      color-scheme: dark;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: radial-gradient(circle at top left, #5850ec 0%, #1b1b3a 55%, #101126 100%);
+      color: #f4f7ff;
+    }
+
+    .game-board {
+      width: 340px;
+      padding: 24px;
+      border-radius: 32px;
+      background: rgba(16, 18, 38, 0.95);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      box-shadow: 0 24px 60px rgba(0, 0, 0, 0.35);
+    }
+
+    .title {
+      margin: 0 0 12px;
+      font-size: 1.8rem;
+      letter-spacing: 0.03em;
+      text-align: center;
+    }
+
+    .subtitle {
+      margin: 0 0 16px;
+      text-align: center;
+      color: #c8d0ff;
+      font-size: 0.95rem;
+      line-height: 1.5;
+    }
+
+    .status-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      margin-bottom: 20px;
+    }
+
+    .status-card {
+      flex: 1;
+      padding: 14px 16px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      text-align: center;
+    }
+
+    .status-card strong {
+      display: block;
+      font-size: 1.3rem;
+      margin-bottom: 6px;
+    }
+
+    .board-area {
+      position: relative;
+      width: 100%;
+      height: 240px;
+      margin-bottom: 10px;
+      border-radius: 14px;
+      overflow: hidden;
+      background: linear-gradient(180deg, rgba(255, 255, 255, 0.05), rgba(255, 255, 255, 0.02));
+      border: 1px solid rgba(255, 255, 255, 0.08);
+    }
+
+    .star {
+      position: absolute;
+      width: 62px;
+      height: 62px;
+      border-radius: 50%;
+      background: radial-gradient(circle at 35% 35%, #ffea7b 0%, #ffd83f 28%, #f78d1f 80%);
+      box-shadow: 0 0 0 8px rgba(255, 0, 43, 0.12), 0 18px 35px rgba(255, 190, 33, 0.25);
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 120ms ease, opacity 120ms ease;
+    }
+
+    .star:active {
+      transform: scale(0.92);
+    }
+
+    .star::before {
+      content: '★';
+      font-size: 2.2rem;
+      color:plum;
+      text-shadow: 0 0 12px rgba(255, 255, 255, 0.8);
+    }
+
+    .controls {
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+    }
+
+    button {
+      padding: 14px 16px;
+      border: none;
+      border-radius: 16px;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+      color: #12121f;
+      transition: transform 120ms ease, box-shadow 120ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+      box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15);
+    }
+
+    #startBtn {
+      background: powderblue;
+    }
+
+    #resetBtn {
+      background: #f7b32b;
+    }
+
+    .message {
+      margin-top: 18px;
+      text-align: center;
+      font-size: 0.95rem;
+      color: #c8d0ff;
+      min-height: 1.4em;
+    }
+
+    .small-note {
+      margin-top: 10px;
+      font-size: 0.87rem;
+      color: rgba(255, 255, 255, 0.7);
+      text-align: center;
+    }
+  </style>
+</head>
+<body>
+  <div class="game-board">
+    <h1 class="title">Catch the Star</h1>
+    <p class="subtitle">Click the glowing star as it jumps around the field. Each catch increases your score and speeds up the challenge.</p>
+
+    <div class="status-row">
+      <div class="status-card">
+        <strong id="score">0</strong>
+        Score
+      </div>
+      <div class="status-card">
+        <strong id="time">30</strong>
+        Seconds left
+      </div>
+    </div>
+
+    <div class="board-area" id="board">
+      <div id="star" class="star" title="Catch me!" aria-label="Catch the star"></div>
+    </div>
+
+    <div class="controls">
+      <button id="startBtn">Start game</button>
+      <button id="resetBtn">Reset</button>
+    </div>
+
+    <p class="message" id="message">Ready to play?</p>
+    <p class="small-note">The star moves faster after every 4 catches. Stay quick!</p>
+  </div>
+
+  <script>
+    const board = document.getElementById('board');
+    const star = document.getElementById('star');
+    const scoreEl = document.getElementById('score');
+    const timeEl = document.getElementById('time');
+    const messageEl = document.getElementById('message');
+    const startBtn = document.getElementById('startBtn');
+    const resetBtn = document.getElementById('resetBtn');
+
+    let score = 0;
+    let timeLeft = 30;
+    let intervalId = null;
+    let moveIntervalId = null;
+    let moveDelay = 900;
+    let gameActive = false;
+
+    function getRandomPosition() {
+      const area = board.getBoundingClientRect();
+      const size = star.offsetWidth;
+      const maxX = area.width - size;
+      const maxY = area.height - size;
+      return {
+        x: Math.round(Math.random() * maxX),
+        y: Math.round(Math.random() * maxY)
+      };
+    }
+
+    function moveStar() {
+      const { x, y } = getRandomPosition();
+      star.style.transform = `translate(${x}px, ${y}px)`;
+    }
+
+    function changeSpeed() {
+      const newDelay = Math.max(400, 900 - Math.floor(score / 4) * 100);
+      if (newDelay !== moveDelay) {
+        moveDelay = newDelay;
+        restartStarMovement();
+      }
+    }
+
+    function updateBoard() {
+      scoreEl.textContent = score;
+      timeEl.textContent = timeLeft;
+    }
+
+    function tick() {
+      if (!gameActive) return;
+      timeLeft -= 1;
+      updateBoard();
+      if (timeLeft <= 0) {
+        endGame();
+      }
+    }
+
+    function startGame() {
+      if (gameActive) return;
+      gameActive = true;
+      score = 0;
+      timeLeft = 30;
+      moveDelay = 900;
+      updateBoard();
+      messageEl.textContent = 'Catch as many stars as you can!';
+      moveStar();
+      intervalId = setInterval(tick, 1000);
+      restartStarMovement();
+      startBtn.textContent = 'Playing...';
+      startBtn.disabled = true;
+    }
+
+    function endGame() {
+      gameActive = false;
+      clearInterval(intervalId);
+      clearInterval(moveIntervalId);
+      messageEl.textContent = `Time's up! Your final score is ${score}.`;
+      startBtn.textContent = 'Start game';
+      startBtn.disabled = false;
+    }
+
+    function resetGame() {
+      clearInterval(intervalId);
+      clearInterval(moveIntervalId);
+      gameActive = false;
+      score = 0;
+      timeLeft = 30;
+      moveDelay = 900;
+      updateBoard();
+      messageEl.textContent = 'Ready to play?';
+      star.style.transform = 'translate(20px, 20px)';
+      startBtn.textContent = 'Start game';
+      startBtn.disabled = false;
+    }
+
+    function restartStarMovement() {
+      clearInterval(moveIntervalId);
+      moveIntervalId = setInterval(() => {
+        if (!gameActive) return;
+        moveStar();
+      }, moveDelay);
+    }
+
+    star.addEventListener('click', () => {
+      if (!gameActive) return;
+      score += 1;
+      messageEl.textContent = 'Nice catch!';
+      changeSpeed();
+      moveStar();
+      updateBoard();
+    });
+
+    startBtn.addEventListener('click', startGame);
+    resetBtn.addEventListener('click', resetGame);
+
+    window.addEventListener('load', resetGame);
+  </script>
+</body>
+</html>
